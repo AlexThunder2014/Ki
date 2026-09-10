@@ -1,16 +1,31 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js";
 
-const KEY = "AI_BUILDER_V2";
+
+/* =========================================
+   AI BUILDER V3
+========================================= */
+
+const KEY = "AI_BUILDER_V3";
+
 
 const defaults = {
+
   theme: "dark",
+
   projectName: "Mein AI-Projekt",
+
   activeFile: "index.html",
+
   mode: "auto",
+
   endpoint: "",
+
   responseStyle: "Hilfreich & ausführlich",
+
   autoPlan: "Aktiv",
+
   messages: [],
+
   tasks: [],
 
   files: {
@@ -53,27 +68,33 @@ padding:40px
     "app.js": `console.log("Mein AI-Projekt läuft!");`
 
   }
+
 };
+
 
 let state = load();
 
 let three = {};
 
 
-/* -----------------------------
-   HILFSFUNKTIONEN
------------------------------ */
+/* =========================================
+   SPEICHER
+========================================= */
 
 function load(){
 
   try{
 
-    let x = JSON.parse(
-      localStorage.getItem(KEY)
-    );
+    const saved =
+      JSON.parse(
+        localStorage.getItem(KEY)
+      );
 
-    return x
-      ? merge(structuredClone(defaults), x)
+    return saved
+      ? merge(
+          structuredClone(defaults),
+          saved
+        )
       : structuredClone(defaults);
 
   }catch{
@@ -87,23 +108,23 @@ function load(){
 
 function merge(a,b){
 
-  for(const k in b){
+  for(const key in b){
 
     if(
-      b[k] &&
-      typeof b[k] === "object" &&
-      !Array.isArray(b[k]) &&
-      a[k]
+      b[key] &&
+      typeof b[key] === "object" &&
+      !Array.isArray(b[key]) &&
+      a[key]
     ){
 
-      a[k] = {
-        ...a[k],
-        ...b[k]
+      a[key] = {
+        ...a[key],
+        ...b[key]
       };
 
     }else{
 
-      a[k] = b[k];
+      a[key] = b[key];
 
     }
 
@@ -118,33 +139,48 @@ const $ = id =>
   document.getElementById(id);
 
 
-const save = () =>
+function save(){
+
   localStorage.setItem(
     KEY,
     JSON.stringify(state)
   );
 
+}
 
-const wait = ms =>
-  new Promise(
-    resolve => setTimeout(resolve,ms)
+
+function wait(ms){
+
+  return new Promise(
+    resolve =>
+      setTimeout(resolve,ms)
   );
 
+}
 
-/* -----------------------------
+
+/* =========================================
    START
------------------------------ */
+========================================= */
 
 function init(){
 
   theme();
+
   navigation();
+
   chat();
+
   files();
+
   builder();
+
   creative();
+
   settings();
+
   render();
+
   init3d();
 
 }
@@ -152,9 +188,9 @@ function init(){
 init();
 
 
-/* -----------------------------
+/* =========================================
    THEME
------------------------------ */
+========================================= */
 
 function theme(){
 
@@ -171,9 +207,9 @@ function theme(){
 }
 
 
-/* -----------------------------
+/* =========================================
    NAVIGATION
------------------------------ */
+========================================= */
 
 function navigation(){
 
@@ -182,7 +218,9 @@ function navigation(){
     .forEach(button => {
 
       button.onclick = () =>
-        view(button.dataset.view);
+        view(
+          button.dataset.view
+        );
 
     });
 
@@ -207,9 +245,9 @@ function navigation(){
 
   $("menu").onclick = () => {
 
-    $("sidebar").classList.toggle(
-      "open"
-    );
+    $("sidebar")
+      .classList
+      .toggle("open");
 
   };
 
@@ -217,9 +255,11 @@ function navigation(){
   $("newChat").onclick = () => {
 
     state.messages = [];
+
     state.tasks = [];
 
     save();
+
     render();
 
   };
@@ -233,6 +273,7 @@ function navigation(){
         : "dark";
 
     save();
+
     theme();
 
   };
@@ -247,9 +288,11 @@ function navigation(){
     ){
 
       state.messages = [];
+
       state.tasks = [];
 
       save();
+
       render();
 
     }
@@ -264,7 +307,9 @@ function view(v){
   document
     .querySelectorAll(".view")
     .forEach(x =>
-      x.classList.remove("active")
+      x.classList.remove(
+        "active"
+      )
     );
 
 
@@ -284,9 +329,13 @@ function view(v){
   const titles = {
 
     chat: "Chat",
+
     builder: "Builder",
+
     files: "Dateien",
+
     creative: "Bilder & 3D",
+
     settings: "Einstellungen"
 
   };
@@ -296,9 +345,9 @@ function view(v){
     titles[v];
 
 
-  $("sidebar").classList.remove(
-    "open"
-  );
+  $("sidebar")
+    .classList
+    .remove("open");
 
 
   if(v === "creative"){
@@ -313,9 +362,9 @@ function view(v){
 }
 
 
-/* -----------------------------
+/* =========================================
    CHAT
------------------------------ */
+========================================= */
 
 function chat(){
 
@@ -404,14 +453,16 @@ function chat(){
 }
 
 
-/* -----------------------------
-   NACHRICHT SENDEN
------------------------------ */
+/* =========================================
+   SENDEN
+========================================= */
 
 async function send(){
 
-  let text =
-    $("input").value.trim();
+  const text =
+    $("input")
+      .value
+      .trim();
 
 
   if(!text)
@@ -424,13 +475,13 @@ async function send(){
     "auto";
 
 
-  add(
+  addMessage(
     "user",
     text
   );
 
 
-  task(
+  addTask(
     "Aufgabe analysieren",
     true
   );
@@ -439,43 +490,63 @@ async function send(){
   render();
 
 
-  let reply;
+  let result;
 
 
   if(state.endpoint){
 
     try{
 
-      reply =
+      result =
         await backend(text);
 
-    }catch(e){
+    }catch(error){
 
-      reply =
-        "⚠️ Backend nicht erreichbar.\n\n" +
-        "Demo-Modus:\n\n" +
-        localAI(text);
+      result = {
+
+        text:
+          "⚠️ Das Backend konnte nicht erreicht werden.\n\n" +
+          "Ich nutze deshalb den Demo-Modus.\n\n" +
+          localAI(text).text,
+
+        code:
+          localAI(text).code,
+
+        language:
+          localAI(text).language,
+
+        file:
+          localAI(text).file,
+
+        image:
+          null
+
+      };
 
     }
 
   }else{
 
-    await wait(300);
+    await wait(350);
 
-    reply =
+    result =
       localAI(text);
 
   }
 
 
-  add(
+  addMessage(
     "ai",
-    reply
+    result.text,
+    result.code,
+    result.language,
+    result.file,
+    result.image
   );
 
 
-  task(
-    "Antwort erstellen",
+  addTask(
+    "Antwort erstellt",
     true
   );
 
@@ -487,30 +558,34 @@ async function send(){
 }
 
 
-/* -----------------------------
+/* =========================================
    BACKEND
------------------------------ */
+========================================= */
 
 async function backend(message){
 
-  let response =
+  const response =
     await fetch(
       state.endpoint,
       {
 
-        method:"POST",
+        method: "POST",
 
-        headers:{
+        headers: {
           "Content-Type":
             "application/json"
         },
 
-        body:JSON.stringify({
+        body: JSON.stringify({
 
           message,
-          files:state.files,
+
+          files:
+            state.files,
+
           projectName:
             state.projectName,
+
           mode:
             state.mode
 
@@ -520,65 +595,116 @@ async function backend(message){
     );
 
 
-  if(!response.ok)
-    throw Error(
+  if(!response.ok){
+
+    throw new Error(
       "HTTP " +
       response.status
     );
 
+  }
 
-  let data =
+
+  const data =
     await response.json();
 
 
   if(data.files){
 
     state.files = {
+
       ...state.files,
+
       ...data.files
+
     };
 
   }
 
 
-  return (
-    data.reply ||
-    data.message ||
-    "Keine Antwort."
-  );
+  return {
+
+    text:
+      data.reply ||
+      data.message ||
+      "Keine Antwort.",
+
+    code:
+      data.code ||
+      null,
+
+    language:
+      data.language ||
+      "javascript",
+
+    file:
+      data.file ||
+      null,
+
+    image:
+      data.imageUrl ||
+      data.image ||
+      null
+
+  };
 
 }
 
 
-/* -----------------------------
+/* =========================================
    DEMO-KI
------------------------------ */
+========================================= */
 
-function localAI(t){
+function localAI(text){
 
-  let p =
-    t.toLowerCase();
+  const p =
+    text.toLowerCase();
 
 
   /* BILD */
 
   if(
     state.mode === "image" ||
-    /bild|grafik|bildprompt/.test(p)
+    /bild|bild erstellen|grafik|illustration|foto|image/.test(p)
   ){
 
-    return `🖼️ Bild-Prompt
+    const prompt =
+`Erstelle ein hochwertiges ${getImageStyle()}-Bild.
 
-Erstelle ein hochwertiges, modernes Bild zum Thema:
-
-${t}
+Thema:
+${text}
 
 Stil:
-${state.responseStyle}
+Modern, detailliert, professionelle Beleuchtung,
+klare Komposition, starke Tiefenwirkung,
+hochwertige Darstellung.
 
-Klare Komposition,
-professionelle Beleuchtung,
-hohe Detailqualität.`;
+Format:
+16:9`;
+
+    return {
+
+      text:
+`🖼️ Bild-Anfrage erkannt.
+
+Ich habe einen Bild-Prompt für deine Anfrage erstellt.
+
+Im echten KI-Modus kann dein Backend
+hier anschließend ein echtes Bild zurückgeben.`,
+
+      code:
+null,
+
+      language:
+null,
+
+      file:
+null,
+
+      image:
+createDemoImage(text)
+
+    };
 
   }
 
@@ -587,20 +713,62 @@ hohe Detailqualität.`;
 
   if(
     state.mode === "3d" ||
-    /3d|animation/.test(p)
+    /3d|three\.js|dreidimensional/.test(p)
   ){
 
-    return `🧊 3D-Konzept
+    return {
 
-Three.js-Szene mit:
+      text:
+`🧊 3D-Modus
 
-1. Zentralem Objekt
-2. Beleuchtung
-3. Kameraanimation
-4. Responsiver Darstellung
+Ich würde dafür eine Three.js-Szene erstellen.
 
-Die aktuelle V2 enthält bereits
-eine 3D-Vorschau.`;
+Die aktuelle V3 besitzt bereits
+eine interaktive 3D-Vorschau.
+
+Wenn du eine echte 3D-Programmierung
+möchtest, kann das Backend den
+vollständigen Three.js-Code erzeugen.`,
+
+      code:
+`const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+  60,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  100
+);
+
+camera.position.z = 5;
+
+const geometry =
+  new THREE.IcosahedronGeometry(1, 2);
+
+const material =
+  new THREE.MeshStandardMaterial({
+    metalness: 0.5,
+    roughness: 0.25
+  });
+
+const mesh =
+  new THREE.Mesh(
+    geometry,
+    material
+  );
+
+scene.add(mesh);`,
+
+      language:
+"javascript",
+
+      file:
+"scene.js",
+
+      image:
+null
+
+    };
 
   }
 
@@ -609,115 +777,582 @@ eine 3D-Vorschau.`;
 
   if(
     state.mode === "plan" ||
-    /plan|schritte/.test(p)
+    /plan|bauplan|schritte|projekt planen/.test(p)
   ){
 
-    return makePlan(t);
+    const plan =
+      makePlan(text);
+
+
+    return {
+
+      text:
+"📋 Bauplan erstellt.\n\n" +
+plan,
+
+      code:
+null,
+
+      language:
+null,
+
+      file:
+null,
+
+      image:
+null
+
+    };
 
   }
 
 
-  /* PROGRAMMIERUNG */
+  /* CODE */
 
   if(
-    /html|css|javascript|website|webseite|code|spiel|programm/.test(p)
+    state.mode === "code" ||
+    /programmiere|programmier|code|html|css|javascript|website|webseite|browser-spiel|spiel|app|app programmieren/.test(p)
   ){
 
-    return `💻 PROGRAMMIERUNG ERKANNT
-
-Deine Aufgabe:
-
-${t}
-
-Ich würde das Projekt so aufbauen:
-
-1. Anforderungen analysieren
-2. Dateien planen
-3. HTML erstellen
-4. CSS erstellen
-5. JavaScript programmieren
-6. Funktionen testen
-7. Fehler verbessern
-8. Projekt exportieren
-
-📁 Vorgeschlagene Dateien:
-
-• index.html
-• style.css
-• app.js
-
-Für eine echte autonome KI müssen
-die Dateien anschließend durch ein
-echtes KI-Backend generiert werden.
-
-Der aktuelle Demo-Modus kann den
-Bauplan darstellen und Dateien
-verwalten.`;
+    return generateDemoCode(
+      text
+    );
 
   }
 
 
-  return `Ich bin AI Builder V2.
+  /* AUTO */
 
-Im Demo-Modus kann ich:
+  return {
 
-• Aufgaben analysieren
-• Baupläne erstellen
-• Projektdateien verwalten
-• kreative Ideen vorbereiten
-• 3D-Vorschauen anzeigen
+    text:
+`🤖 AI Builder V3
 
-Für echte Antworten wie bei einer
-großen KI wird ein KI-Backend benötigt.
+Ich habe deine Aufgabe verstanden:
 
-Deine Aufgabe:
+"${text}"
 
-${t}`;
+Wähle unten einen Modus:
 
-}
+💻 Code
+🖼️ Bild
+🧊 3D
+📋 Plan
 
+Oder verbinde ein echtes KI-Backend.
+Dann kann die V3 echte KI-Antworten,
+Code und Bilder verarbeiten.`,
 
-/* -----------------------------
-   BAUPLAN
------------------------------ */
+    code:
+null,
 
-function makePlan(goal){
+    language:
+null,
 
-  let plan =
-`PROJEKT: ${state.projectName}
+    file:
+null,
 
-ZIEL
-${goal}
+    image:
+null
 
-BAUPLAN
-
-1. Anforderungen ableiten
-2. Seiten und Komponenten planen
-3. HTML erstellen
-4. CSS gestalten
-5. JavaScript programmieren
-6. Testen
-7. Fehler beheben
-8. Ergebnis verbessern`;
-
-  $("plan").textContent =
-    plan;
-
-  return plan;
+  };
 
 }
 
 
-/* -----------------------------
-   CHAT-NACHRICHTEN
------------------------------ */
+/* =========================================
+   DEMO CODE GENERIEREN
+========================================= */
 
-function add(role,text){
+function generateDemoCode(request){
+
+  const p =
+    request.toLowerCase();
+
+
+  /* SPIEL */
+
+  if(
+    /spiel|game|jump|highscore/.test(p)
+  ){
+
+    const html =
+`<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mein Browser-Spiel</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="game">
+  <h1>🎮 Mein Spiel</h1>
+  <p>Punkte: <span id="score">0</span></p>
+  <button id="play">Punkt sammeln</button>
+</div>
+
+<script src="game.js"><\\/script>
+
+</body>
+</html>`;
+
+
+    const css =
+`body{
+margin:0;
+min-height:100vh;
+display:grid;
+place-items:center;
+font-family:system-ui;
+background:#101827;
+color:white;
+}
+
+.game{
+text-align:center;
+padding:40px;
+border-radius:20px;
+background:#182235;
+}
+
+button{
+padding:12px 20px;
+border:0;
+border-radius:10px;
+cursor:pointer;
+}`;
+
+
+    const js =
+`let score = 0;
+
+const scoreElement =
+  document.getElementById("score");
+
+document
+  .getElementById("play")
+  .addEventListener("click", () => {
+
+    score++;
+
+    scoreElement.textContent =
+      score;
+
+  });`;
+
+
+    state.files["index.html"] =
+      html;
+
+    state.files["style.css"] =
+      css;
+
+    state.files["game.js"] =
+      js;
+
+
+    state.activeFile =
+      "index.html";
+
+
+    return {
+
+      text:
+`💻 Browser-Spiel programmiert!
+
+Ich habe drei Dateien erstellt:
+
+📄 index.html
+📄 style.css
+📄 game.js
+
+Der Code wird direkt im Chat
+als echte Code-Blöcke angezeigt
+und gleichzeitig im Projekt gespeichert.`,
+
+      code:
+html,
+
+      language:
+"html",
+
+      file:
+"index.html",
+
+      image:
+null
+
+    };
+
+  }
+
+
+  /* WEBSEITE */
+
+  if(
+    /website|webseite|homepage|portfolio/.test(p)
+  ){
+
+    const html =
+`<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meine Webseite</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <nav>
+    <strong>Meine Webseite</strong>
+  </nav>
+</header>
+
+<main>
+
+<section class="hero">
+  <h1>Willkommen</h1>
+  <p>Meine moderne Webseite.</p>
+  <button id="start">Loslegen</button>
+</section>
+
+</main>
+
+<script src="app.js"><\\/script>
+
+</body>
+</html>`;
+
+
+    const css =
+`*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:system-ui;
+background:#0b1020;
+color:white;
+}
+
+header{
+padding:20px;
+background:#111827;
+}
+
+.hero{
+min-height:80vh;
+display:grid;
+place-items:center;
+text-align:center;
+padding:30px;
+}
+
+.hero h1{
+font-size:clamp(40px,8vw,80px);
+margin:0;
+}
+
+button{
+border:0;
+padding:13px 22px;
+border-radius:12px;
+background:#7657ff;
+color:white;
+cursor:pointer;
+}`;
+
+
+    const js =
+`document
+  .getElementById("start")
+  .addEventListener("click", () => {
+
+    alert("Willkommen auf deiner Webseite!");
+
+  });`;
+
+
+    state.files["index.html"] =
+      html;
+
+    state.files["style.css"] =
+      css;
+
+    state.files["app.js"] =
+      js;
+
+
+    state.activeFile =
+      "index.html";
+
+
+    return {
+
+      text:
+`💻 Webseite programmiert!
+
+Erstellt wurden:
+
+📄 index.html
+📄 style.css
+📄 app.js
+
+Der Code steht direkt unten
+in einem kopierbaren Code-Block.`,
+
+      code:
+html,
+
+      language:
+"html",
+
+      file:
+"index.html",
+
+      image:
+null
+
+    };
+
+  }
+
+
+  /* STANDARD JAVASCRIPT */
+
+  const code =
+`function startProject(){
+
+  const message =
+    "Hallo von AI Builder V3!";
+
+  console.log(message);
+
+}
+
+startProject();`;
+
+
+  state.files["app.js"] =
+    code;
+
+
+  state.activeFile =
+    "app.js";
+
+
+  return {
+
+    text:
+`💻 Programmierung erkannt.
+
+Ich habe JavaScript-Code für deine
+Aufgabe vorbereitet.
+
+Die Datei wurde außerdem im
+Projekt gespeichert.`,
+
+    code,
+
+    language:
+"javascript",
+
+    file:
+"app.js",
+
+    image:
+null
+
+  };
+
+}
+
+
+/* =========================================
+   BILD-STIL
+========================================= */
+
+function getImageStyle(){
+
+  const select =
+    $("style");
+
+
+  return select
+    ? select.value
+    : "Cinematic";
+
+}
+
+
+/* =========================================
+   DEMO-BILD
+========================================= */
+
+function createDemoImage(text){
+
+  const title =
+    escapeSvg(
+      text
+        .replace(
+          /\s+/g,
+          " "
+        )
+        .slice(
+          0,
+          70
+        )
+    );
+
+
+  const svg =
+`<svg xmlns="http://www.w3.org/2000/svg"
+width="1200"
+height="675"
+viewBox="0 0 1200 675">
+
+<defs>
+
+<linearGradient
+id="bg"
+x1="0"
+y1="0"
+x2="1"
+y2="1">
+
+<stop
+offset="0%"
+stop-color="#15102f"/>
+
+<stop
+offset="50%"
+stop-color="#283b78"/>
+
+<stop
+offset="100%"
+stop-color="#071b2d"/>
+
+</linearGradient>
+
+</defs>
+
+<rect
+width="1200"
+height="675"
+fill="url(#bg)"/>
+
+<circle
+cx="900"
+cy="180"
+r="90"
+fill="#ffffff"
+opacity=".15"/>
+
+<circle
+cx="300"
+cy="400"
+r="170"
+fill="#7657ff"
+opacity=".18"/>
+
+<text
+x="600"
+y="310"
+text-anchor="middle"
+font-family="Arial"
+font-size="42"
+font-weight="bold"
+fill="white">
+AI Builder V3
+</text>
+
+<text
+x="600"
+y="370"
+text-anchor="middle"
+font-family="Arial"
+font-size="24"
+fill="#dbeafe">
+${title}
+</text>
+
+<text
+x="600"
+y="600"
+text-anchor="middle"
+font-family="Arial"
+font-size="18"
+fill="#a5b4fc">
+DEMO-BILDVORSCHAU
+</text>
+
+</svg>`;
+
+
+  return (
+    "data:image/svg+xml;charset=utf-8," +
+    encodeURIComponent(svg)
+  );
+
+}
+
+
+function escapeSvg(text){
+
+  return String(text)
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    );
+
+}
+
+
+/* =========================================
+   NACHRICHT HINZUFÜGEN
+========================================= */
+
+function addMessage(
+  role,
+  text,
+  code = null,
+  language = null,
+  file = null,
+  image = null
+){
 
   state.messages.push({
 
     role,
+
     text,
+
+    code,
+
+    language,
+
+    file,
+
+    image,
 
     time:
       new Date()
@@ -734,15 +1369,18 @@ function add(role,text){
 }
 
 
-/* -----------------------------
-   AUFGABEN
------------------------------ */
+/* =========================================
+   TASK
+========================================= */
 
-function task(text,done){
+function addTask(text,done){
 
   state.tasks.push({
+
     text,
+
     done
+
   });
 
 
@@ -752,9 +1390,9 @@ function task(text,done){
 }
 
 
-/* -----------------------------
+/* =========================================
    RENDER
------------------------------ */
+========================================= */
 
 function render(){
 
@@ -789,7 +1427,7 @@ function render(){
       : "Demo-Modus";
 
 
-  let tasks =
+  const tasks =
     $("tasks");
 
 
@@ -799,12 +1437,13 @@ function render(){
       ? state.tasks
           .slice()
           .reverse()
-          .map(x =>
-            `<div>${
-              x.done
-                ? "✓"
-                : "○"
-            } ${esc(x.text)}</div>`
+          .map(
+            task =>
+              `<div>${
+                task.done
+                  ? "✓"
+                  : "○"
+              } ${escapeHtml(task.text)}</div>`
           )
           .join("")
 
@@ -813,13 +1452,13 @@ function render(){
 }
 
 
-/* -----------------------------
-   NACHRICHTEN ANZEIGEN
------------------------------ */
+/* =========================================
+   NACHRICHTEN RENDERN
+========================================= */
 
 function renderMessages(){
 
-  let box =
+  const box =
     $("messages");
 
 
@@ -838,55 +1477,99 @@ function renderMessages(){
   );
 
 
-  state.messages.forEach(m => {
+  state.messages.forEach(message => {
 
-    let d =
+    const wrapper =
       document.createElement(
         "div"
       );
 
 
-    d.className =
+    wrapper.className =
       "msg " +
-      m.role;
+      message.role;
 
 
-    d.innerHTML = `
+    const avatar =
+      message.role === "user"
+        ? "👤"
+        : "✦";
+
+
+    wrapper.innerHTML = `
+
       <div class="avatar">
-        ${
-          m.role === "user"
-            ? "👤"
-            : "✦"
-        }
+        ${avatar}
       </div>
 
-      <div>
+      <div class="messageContent">
 
         <div class="role">
           ${
-            m.role === "user"
+            message.role === "user"
               ? "Du"
               : "AI Builder"
           }
-
           ·
-
-          ${m.time || ""}
+          ${message.time || ""}
         </div>
 
         <div class="msgbody"></div>
 
       </div>
+
     `;
 
 
-    d.querySelector(
-      ".msgbody"
-    ).textContent =
-      m.text;
+    const body =
+      wrapper.querySelector(
+        ".msgbody"
+      );
 
 
-    box.appendChild(d);
+    body.textContent =
+      message.text || "";
+
+
+    /* CODE */
+
+    if(message.code){
+
+      const block =
+        createCodeBlock(
+          message.code,
+          message.language,
+          message.file
+        );
+
+
+      body.appendChild(
+        block
+      );
+
+    }
+
+
+    /* BILD */
+
+    if(message.image){
+
+      const image =
+        createImageBlock(
+          message.image
+        );
+
+
+      body.appendChild(
+        image
+      );
+
+    }
+
+
+    box.appendChild(
+      wrapper
+    );
 
   });
 
@@ -897,148 +1580,347 @@ function renderMessages(){
 }
 
 
-/* -----------------------------
-   SICHERER TEXT
------------------------------ */
+/* =========================================
+   CODE-BLOCK
+========================================= */
 
-function esc(s){
+function createCodeBlock(
+  code,
+  language,
+  file
+){
 
-  return String(s)
-    .replace(
-      /[&<>"']/g,
-      c => ({
-
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#39;"
-
-      })[c]
-    );
-
-}
-
-
-/* -----------------------------
-   DATEIEN
------------------------------ */
-
-function files(){
-
-  $("save").onclick = () => {
-
-    state.files[
-      state.activeFile
-    ] =
-      $("code").value;
-
-
-    save();
-
-
-    $("save").textContent =
-      "✓ Gespeichert";
-
-
-    setTimeout(
-      () =>
-        $("save").textContent =
-          "Speichern",
-      900
+  const container =
+    document.createElement(
+      "div"
     );
 
 
-    renderFiles();
+  container.className =
+    "codeblock";
 
-  };
+
+  const header =
+    document.createElement(
+      "div"
+    );
 
 
-  $("newFile").onclick = () => {
+  header.className =
+    "codehead";
 
-    let name =
-      prompt(
-        "Dateiname, z. B. script.js"
+
+  const label =
+    document.createElement(
+      "span"
+    );
+
+
+  label.className =
+    "code-language";
+
+
+  label.textContent =
+    file
+      ? `${language || "code"} · ${file}`
+      : language ||
+        "code";
+
+
+  const copy =
+    document.createElement(
+      "button"
+    );
+
+
+  copy.className =
+    "copycode";
+
+
+  copy.textContent =
+    "📋 Kopieren";
+
+
+  copy.onclick = async () => {
+
+    try{
+
+      await navigator.clipboard.writeText(
+        code
       );
 
+      copy.textContent =
+        "✓ Kopiert";
 
-    if(
-      name &&
-      !state.files[name]
-    ){
+      setTimeout(
+        () =>
+          copy.textContent =
+            "📋 Kopieren",
+        1200
+      );
 
-      state.files[name] =
-        "";
+    }catch{
 
-      state.activeFile =
-        name;
-
-      save();
-
-      renderFiles();
+      copy.textContent =
+        "Kopieren nicht möglich";
 
     }
 
   };
 
 
-  $("export").onclick = () => {
+  header.appendChild(
+    label
+  );
 
-    let bundle =
-      Object
-        .entries(state.files)
-        .map(
-          ([name,content]) =>
+  header.appendChild(
+    copy
+  );
+
+
+  const pre =
+    document.createElement(
+      "pre"
+    );
+
+
+  const codeElement =
+    document.createElement(
+      "code"
+    );
+
+
+  codeElement.textContent =
+    code;
+
+
+  pre.appendChild(
+    codeElement
+  );
+
+
+  container.appendChild(
+    header
+  );
+
+  container.appendChild(
+    pre
+  );
+
+
+  return container;
+
+}
+
+
+/* =========================================
+   BILD-BLOCK
+========================================= */
+
+function createImageBlock(
+  source
+){
+
+  const wrapper =
+    document.createElement(
+      "div"
+    );
+
+
+  wrapper.className =
+    "image-result";
+
+
+  const image =
+    document.createElement(
+      "img"
+    );
+
+
+  image.src =
+    source;
+
+
+  image.alt =
+    "AI Builder Bild";
+
+
+  const caption =
+    document.createElement(
+      "div"
+    );
+
+
+  caption.className =
+    "image-caption";
+
+
+  caption.textContent =
+    "🖼️ Bildvorschau";
+
+
+  wrapper.appendChild(
+    image
+  );
+
+  wrapper.appendChild(
+    caption
+  );
+
+
+  return wrapper;
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHtml(text){
+
+  return String(text)
+    .replace(
+      /[&<>"']/g,
+      char =>
+        ({
+          "&":"&amp;",
+          "<":"&lt;",
+          ">":"&gt;",
+          '"':"&quot;",
+          "'":"&#39;"
+        })[char]
+    );
+
+}
+
+
+/* =========================================
+   DATEIEN
+========================================= */
+
+function files(){
+
+  $("save").onclick =
+    () => {
+
+      state.files[
+        state.activeFile
+      ] =
+        $("code").value;
+
+
+      save();
+
+
+      $("save").textContent =
+        "✓ Gespeichert";
+
+
+      setTimeout(
+        () =>
+          $("save").textContent =
+            "Speichern",
+        900
+      );
+
+
+      renderFiles();
+
+    };
+
+
+  $("newFile").onclick =
+    () => {
+
+      const name =
+        prompt(
+          "Dateiname, z. B. script.js"
+        );
+
+
+      if(
+        name &&
+        !state.files[name]
+      ){
+
+        state.files[name] =
+          "";
+
+        state.activeFile =
+          name;
+
+        save();
+
+        renderFiles();
+
+      }
+
+    };
+
+
+  $("export").onclick =
+    () => {
+
+      const bundle =
+        Object
+          .entries(
+            state.files
+          )
+          .map(
+            ([name,content]) =>
 `===== ${name} =====
 ${content}`
+          )
+          .join(
+            "\n\n"
+          );
+
+
+      const link =
+        document.createElement(
+          "a"
+        );
+
+
+      link.href =
+        URL.createObjectURL(
+          new Blob(
+            [bundle],
+            {
+              type:
+                "text/plain"
+            }
+          )
+        );
+
+
+      link.download =
+        (
+          state.projectName ||
+          "AI-Projekt"
         )
-        .join("\n\n");
+        .replace(
+          /\s+/g,
+          "-"
+        ) +
+        ".txt";
 
 
-    let link =
-      document.createElement(
-        "a"
-      );
+      link.click();
 
-
-    link.href =
-      URL.createObjectURL(
-        new Blob(
-          [bundle],
-          {
-            type:
-              "text/plain"
-          }
-        )
-      );
-
-
-    link.download =
-      (
-        state.projectName ||
-        "AI-Projekt"
-      )
-      .replace(
-        /\s+/g,
-        "-"
-      ) +
-      ".txt";
-
-
-    link.click();
-
-  };
+    };
 
 }
 
 
 function renderFiles(){
 
-  let list =
+  const list =
     $("filelist");
 
 
-  let select =
+  const select =
     $("activeFile");
 
 
@@ -1048,10 +1930,12 @@ function renderFiles(){
 
 
   Object
-    .keys(state.files)
+    .keys(
+      state.files
+    )
     .forEach(name => {
 
-      let button =
+      const button =
         document.createElement(
           "button"
         );
@@ -1071,16 +1955,17 @@ function renderFiles(){
         "📄 " + name;
 
 
-      button.onclick = () => {
+      button.onclick =
+        () => {
 
-        state.activeFile =
-          name;
+          state.activeFile =
+            name;
 
-        save();
+          save();
 
-        renderFiles();
+          renderFiles();
 
-      };
+        };
 
 
       list.appendChild(
@@ -1088,7 +1973,7 @@ function renderFiles(){
       );
 
 
-      let option =
+      const option =
         document.createElement(
           "option"
         );
@@ -1125,16 +2010,16 @@ function renderFiles(){
 }
 
 
-/* -----------------------------
+/* =========================================
    BUILDER
------------------------------ */
+========================================= */
 
 function builder(){
 
   $("runBuilder").onclick =
     () => {
 
-      let plan =
+      const plan =
         makePlan(
           $("goal")
             .value
@@ -1142,13 +2027,13 @@ function builder(){
         );
 
 
-      task(
+      addTask(
         "Bauplan erstellt",
         true
       );
 
 
-      add(
+      addMessage(
         "ai",
         "📋 Bauplan erstellt.\n\n" +
         plan
@@ -1166,28 +2051,73 @@ function builder(){
 }
 
 
-/* -----------------------------
+function makePlan(goal){
+
+  const plan =
+`PROJEKT
+${state.projectName}
+
+ZIEL
+${goal}
+
+BAUPLAN
+
+1. Anforderungen analysieren
+2. Seiten und Komponenten planen
+3. HTML erstellen
+4. CSS gestalten
+5. JavaScript programmieren
+6. Funktionen testen
+7. Fehler beheben
+8. Ergebnis verbessern
+9. Projektdateien speichern
+10. Ergebnis veröffentlichen`;
+
+  $("plan").textContent =
+    plan;
+
+
+  return plan;
+
+}
+
+
+/* =========================================
    CREATIVE
------------------------------ */
+========================================= */
 
 function creative(){
 
   $("makePrompt").onclick =
     () => {
 
+      const subject =
+        $("idea")
+          .value
+          .trim() ||
+        "eine futuristische Szene";
+
+
       $("imagePrompt").value =
 `Hochwertiges ${
   $("style").value
-}-Bild:
+}-Bild.
 
-${$("idea").value ||
-  "eine futuristische Szene"}.
+Motiv:
+${subject}
 
-Cinematic composition,
-detaillierte Umgebung,
+Bildstil:
+${$("style").value}
+
+Detaillierte Umgebung,
 professionelle Beleuchtung,
-starke Tiefenwirkung,
-hochwertiges Ergebnis.`;
+cinematische Komposition,
+realistische Tiefenwirkung,
+hohe Detailqualität,
+hochwertige Darstellung.
+
+Format:
+16:9`;
 
     };
 
@@ -1222,9 +2152,9 @@ hochwertiges Ergebnis.`;
 }
 
 
-/* -----------------------------
-   EINSTELLUNGEN
------------------------------ */
+/* =========================================
+   SETTINGS
+========================================= */
 
 function settings(){
 
@@ -1259,10 +2189,10 @@ function settings(){
 
 
   $("responseStyle").onchange =
-    e => {
+    event => {
 
       state.responseStyle =
-        e.target.value;
+        event.target.value;
 
       save();
 
@@ -1270,10 +2200,10 @@ function settings(){
 
 
   $("autoPlan").onchange =
-    e => {
+    event => {
 
       state.autoPlan =
-        e.target.value;
+        event.target.value;
 
       save();
 
@@ -1315,21 +2245,21 @@ function renderSettings(){
 }
 
 
-/* -----------------------------
+/* =========================================
    THREE.JS
------------------------------ */
+========================================= */
 
 function init3d(){
 
-  let host =
+  const host =
     $("three");
 
 
-  let scene =
+  const scene =
     new THREE.Scene();
 
 
-  let camera =
+  const camera =
     new THREE.PerspectiveCamera(
       55,
       1,
@@ -1342,7 +2272,7 @@ function init3d(){
     4;
 
 
-  let renderer =
+  const renderer =
     new THREE.WebGLRenderer({
       antialias:true,
       alpha:true
@@ -1368,21 +2298,21 @@ function init3d(){
   );
 
 
-  let geometry =
+  const geometry =
     new THREE.IcosahedronGeometry(
       1.05,
       1
     );
 
 
-  let material =
+  const material =
     new THREE.MeshStandardMaterial({
       metalness:0.45,
       roughness:0.25
     });
 
 
-  let mesh =
+  const mesh =
     new THREE.Mesh(
       geometry,
       material
@@ -1392,7 +2322,7 @@ function init3d(){
   scene.add(mesh);
 
 
-  let light =
+  const light =
     new THREE.PointLight(
       0xffffff,
       2.5,
@@ -1419,11 +2349,17 @@ function init3d(){
 
 
   three = {
+
     scene,
+
     camera,
+
     renderer,
+
     mesh,
+
     auto:true
+
   };
 
 
@@ -1471,18 +2407,18 @@ function resize3d(){
     return;
 
 
-  let host =
+  const host =
     $("three");
 
 
-  let width =
+  const width =
     Math.max(
       host.clientWidth,
       1
     );
 
 
-  let height =
+  const height =
     Math.max(
       host.clientHeight,
       1
