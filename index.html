@@ -2,219 +2,300 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#111827">
-<title>AI Builder V2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="AI Builder V3 – Programmieren, Bilder, 3D und Projekte">
+<title>AI Builder V3</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div class="app">
 
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
 
   <div class="brand">
     <div class="logo">✦</div>
+
     <div>
       <b>AI Builder</b>
-      <small>V2</small>
+      <small>V3</small>
     </div>
   </div>
 
-  <button class="newchat" id="newChat">＋ Neuer Chat</button>
+  <button class="newchat" id="newChat">
+    ＋ Neuer Chat
+  </button>
 
   <nav>
-    <button class="nav active" data-view="chat">💬 <span>Chat</span></button>
-    <button class="nav" data-view="builder">🛠️ <span>Builder</span></button>
-    <button class="nav" data-view="files">📁 <span>Dateien</span></button>
-    <button class="nav" data-view="creative">🎨 <span>Bilder & 3D</span></button>
-    <button class="nav" data-view="settings">⚙️ <span>Einstellungen</span></button>
+
+    <button class="nav active" data-view="chat">
+      💬 <span>Chat</span>
+    </button>
+
+    <button class="nav" data-view="builder">
+      🛠️ <span>Builder</span>
+    </button>
+
+    <button class="nav" data-view="files">
+      📁 <span>Dateien</span>
+    </button>
+
+    <button class="nav" data-view="creative">
+      🎨 <span>Bilder & 3D</span>
+    </button>
+
+    <button class="nav" data-view="settings">
+      ⚙️ <span>Einstellungen</span>
+    </button>
+
   </nav>
 
   <div class="quick">
+
     <small>SCHNELLAKTIONEN</small>
 
-    <button data-prompt="Erstelle eine moderne HTML-Webseite.">
-      🌐 Webseite
+    <button data-prompt="Programmiere mir eine moderne Webseite mit HTML, CSS und JavaScript.">
+      💻 Webseite programmieren
     </button>
 
-    <button data-prompt="Programmiere ein kleines Browser-Spiel.">
-      🎮 Spiel
+    <button data-prompt="Programmiere mir ein kleines Browser-Spiel mit Punkten und Highscore.">
+      🎮 Browser-Spiel
     </button>
 
-    <button data-prompt="Erkläre mir diesen Code einfach.">
-      🧠 Code erklären
+    <button data-prompt="Erstelle einen Bild-Prompt für eine futuristische Stadt bei Nacht.">
+      🖼️ Bild erstellen
     </button>
 
-    <button data-prompt="Entwirf eine 3D-Animation.">
-      🧊 3D-Idee
+    <button data-prompt="Erstelle eine futuristische 3D-Szene.">
+      🧊 3D-Szene
     </button>
+
   </div>
 
   <div class="status">
+
     <i></i>
+
     <div>
-      <b>AI Builder V2</b>
+      <b>AI Builder V3</b>
       <small id="status">Demo-Modus</small>
     </div>
+
   </div>
 
 </aside>
 
+
+<!-- HAUPTBEREICH -->
 <main>
 
 <header>
 
-  <button class="menu" id="menu">☰</button>
+  <button class="menu" id="menu">
+    ☰
+  </button>
 
-  <div>
-    <span>AI Builder</span> /
+  <div class="breadcrumb">
+    <span>AI Builder</span>
+    /
     <b id="title">Chat</b>
   </div>
 
-  <div>
-    <button class="icon" id="theme">☀️</button>
-    <button class="icon" id="clear">🗑️</button>
+  <div class="headerButtons">
+
+    <button class="icon" id="theme">
+      ☀️
+    </button>
+
+    <button class="icon" id="clear">
+      🗑️
+    </button>
+
   </div>
 
 </header>
 
+
+<!-- CHAT -->
 <section class="view active" id="chat">
 
 <div class="chatgrid">
 
 <div class="chat">
 
-<div class="welcome" id="welcome">
+  <div class="welcome" id="welcome">
 
-  <div class="biglogo">✦</div>
+    <div class="biglogo">
+      ✦
+    </div>
 
-  <h1>Was möchtest du bauen?</h1>
+    <h1>
+      Was möchtest du bauen?
+    </h1>
 
-  <p>
-    Beschreibe deine Idee. AI Builder plant sie und verwaltet dein Projekt.
-  </p>
+    <p>
+      Programmiere, plane Projekte, erstelle Bildideen
+      oder baue 3D-Szenen.
+    </p>
 
-  <div class="suggestions">
+    <div class="suggestions">
 
-    <button data-prompt="Baue eine moderne Portfolio-Webseite mit Animationen.">
-      ✨ Portfolio
-    </button>
+      <button data-prompt="Programmiere eine moderne Portfolio-Webseite.">
+        ✨ Portfolio-Webseite
+      </button>
 
-    <button data-prompt="Programmiere ein Browser-Spiel mit Punkten und Highscore.">
-      🎮 Browser-Spiel
-    </button>
+      <button data-prompt="Programmiere ein Browser-Spiel mit Punkten und Highscore.">
+        🎮 Browser-Spiel
+      </button>
 
-    <button data-prompt="Erstelle eine Lern-App mit Quiz und Fortschritt.">
-      📚 Lern-App
-    </button>
+      <button data-prompt="Erstelle ein Bild von einer futuristischen Stadt bei Nacht.">
+        🖼️ Bild
+      </button>
 
-    <button data-prompt="Erstelle eine futuristische 3D-Startseite.">
-      🪐 3D-Seite
-    </button>
+      <button data-prompt="Erstelle eine futuristische 3D-Startseite.">
+        🪐 3D-Seite
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- NACHRICHTEN -->
+  <div class="messages" id="messages"></div>
+
+
+  <!-- EINGABE -->
+  <div class="composerwrap">
+
+    <div class="chips">
+
+      <button class="chip active" data-mode="auto">
+        ✨ Auto
+      </button>
+
+      <button class="chip" data-mode="code">
+        💻 Code
+      </button>
+
+      <button class="chip" data-mode="image">
+        🖼️ Bild
+      </button>
+
+      <button class="chip" data-mode="3d">
+        🧊 3D
+      </button>
+
+      <button class="chip" data-mode="plan">
+        📋 Plan
+      </button>
+
+    </div>
+
+
+    <div class="composer">
+
+      <textarea
+        id="input"
+        rows="1"
+        placeholder="Schreibe deine Aufgabe …"
+      ></textarea>
+
+      <button class="send" id="send">
+        ➤
+      </button>
+
+    </div>
+
+    <small>
+      AI Builder V3 · Code wird im Chat als Code-Block angezeigt.
+    </small>
 
   </div>
 
 </div>
 
-<div class="messages" id="messages"></div>
 
-<div class="composerwrap">
-
-<div class="chips">
-
-<button class="chip active" data-mode="auto">
-✨ Auto
-</button>
-
-<button class="chip" data-mode="code">
-💻 Code
-</button>
-
-<button class="chip" data-mode="image">
-🖼️ Bild
-</button>
-
-<button class="chip" data-mode="3d">
-🧊 3D
-</button>
-
-<button class="chip" data-mode="plan">
-📋 Plan
-</button>
-
-</div>
-
-<div class="composer">
-
-<textarea
-id="input"
-rows="1"
-placeholder="Schreibe deine Aufgabe …"
-></textarea>
-
-<button class="send" id="send">
-➤
-</button>
-
-</div>
-
-<small>
-Prüfe generierten Code vor der Veröffentlichung.
-</small>
-
-</div>
-
-</div>
-
+<!-- RECHTE SEITE -->
 <aside class="context">
 
-<div class="card">
+  <div class="card">
 
-<div class="cardhead">
+    <div class="cardhead">
 
-<b>Arbeitsbereich</b>
+      <b>Arbeitsbereich</b>
 
-<em id="badge">Demo</em>
+      <em id="badge">
+        Demo
+      </em>
 
-</div>
+    </div>
 
-<label>Projektname</label>
 
-<input
-id="project"
-value="Mein AI-Projekt"
->
+    <label>
+      Projektname
+    </label>
 
-<label>Aktive Datei</label>
+    <input
+      id="project"
+      value="Mein AI-Projekt"
+    >
 
-<select id="activeFile"></select>
 
-<div class="stats">
+    <label>
+      Aktive Datei
+    </label>
 
-<div>
-<b id="fc">0</b>
-<small>Dateien</small>
-</div>
+    <select id="activeFile"></select>
 
-<div>
-<b id="mc">0</b>
-<small>Nachrichten</small>
-</div>
 
-</div>
+    <div class="stats">
 
-</div>
+      <div>
+        <b id="fc">0</b>
+        <small>Dateien</small>
+      </div>
 
-<div class="card">
+      <div>
+        <b id="mc">0</b>
+        <small>Nachrichten</small>
+      </div>
 
-<b>KI-Aufgaben</b>
+    </div>
 
-<div id="tasks" class="tasks">
-<small>Noch keine Aufgaben.</small>
-</div>
+  </div>
 
-</div>
+
+  <div class="card">
+
+    <b>KI-Aufgaben</b>
+
+    <div id="tasks" class="tasks">
+      <small>Noch keine Aufgaben.</small>
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <b>V3 Funktionen</b>
+
+    <div class="featureList">
+
+      <div>💻 Code-Blöcke</div>
+      <div>📋 Code kopieren</div>
+      <div>📁 Dateien</div>
+      <div>🖼️ Bild-Prompts</div>
+      <div>🎨 Bildanzeige</div>
+      <div>🧊 3D Preview</div>
+
+    </div>
+
+  </div>
 
 </aside>
 
@@ -222,339 +303,404 @@ value="Mein AI-Projekt"
 
 </section>
 
+
+<!-- BUILDER -->
 <section class="view" id="builder">
 
-<div class="sectionhead">
+  <div class="sectionhead">
 
-<div>
+    <div>
 
-<small>BUILD MODE</small>
+      <small>BUILD MODE</small>
 
-<h2>Projekt-Builder</h2>
+      <h2>
+        Projekt-Builder
+      </h2>
 
-<p>
-Plane dein Projekt in mehreren Schritten.
-</p>
+      <p>
+        Plane dein Projekt Schritt für Schritt.
+      </p>
 
-</div>
+    </div>
 
-<button class="primary" id="runBuilder">
-▶ Builder ausführen
-</button>
+    <button class="primary" id="runBuilder">
+      ▶ Builder ausführen
+    </button>
 
-</div>
+  </div>
 
-<div class="twocol">
 
-<div class="card">
+  <div class="twocol">
 
-<h3>1. Ziel</h3>
+    <div class="card">
 
-<textarea
-id="goal"
-class="biginput"
->Eine moderne Webseite mit Startseite, Navigation und animiertem Hero-Bereich.</textarea>
+      <h3>
+        1. Ziel
+      </h3>
 
-</div>
+      <textarea
+        id="goal"
+        class="biginput"
+      >Eine moderne Webseite mit Startseite, Navigation, Animationen und Dark Mode.</textarea>
 
-<div class="card">
+    </div>
 
-<h3>2. Funktionen</h3>
 
-<div class="checks">
+    <div class="card">
 
-<label>
-<input type="checkbox" checked>
-Responsive Design
-</label>
+      <h3>
+        2. Funktionen
+      </h3>
 
-<label>
-<input type="checkbox" checked>
-Animationen
-</label>
+      <div class="checks">
 
-<label>
-<input type="checkbox" checked>
-Dark Mode
-</label>
+        <label>
+          <input type="checkbox" checked>
+          Responsive Design
+        </label>
 
-<label>
-<input type="checkbox">
-3D-Effekte
-</label>
+        <label>
+          <input type="checkbox" checked>
+          Animationen
+        </label>
 
-<label>
-<input type="checkbox">
-Local Storage
-</label>
+        <label>
+          <input type="checkbox" checked>
+          Dark Mode
+        </label>
 
-<label>
-<input type="checkbox">
-KI-Anbindung
-</label>
+        <label>
+          <input type="checkbox">
+          3D
+        </label>
 
-</div>
+        <label>
+          <input type="checkbox">
+          Local Storage
+        </label>
 
-</div>
+        <label>
+          <input type="checkbox">
+          KI
+        </label>
 
-<div class="card full">
+      </div>
 
-<h3>3. Bauplan</h3>
+    </div>
 
-<pre id="plan">
-Noch kein Bauplan. Starte den Builder.
-</pre>
 
-</div>
+    <div class="card full">
 
-</div>
+      <h3>
+        3. Bauplan
+      </h3>
+
+      <pre id="plan">Noch kein Bauplan.</pre>
+
+    </div>
+
+  </div>
 
 </section>
 
+
+<!-- DATEIEN -->
 <section class="view" id="files">
 
-<div class="sectionhead">
+  <div class="sectionhead">
 
-<div>
+    <div>
 
-<small>PROJECT FILES</small>
+      <small>PROJECT FILES</small>
 
-<h2>Dateien</h2>
+      <h2>
+        Dateien
+      </h2>
 
-<p>
-Projektdateien direkt im Browser bearbeiten.
-</p>
+      <p>
+        Projektdateien direkt im Browser bearbeiten.
+      </p>
 
-</div>
+    </div>
 
-<div>
+    <div>
 
-<button class="secondary" id="newFile">
-＋ Datei
-</button>
+      <button class="secondary" id="newFile">
+        ＋ Datei
+      </button>
 
-<button class="primary" id="export">
-⬇ Export
-</button>
+      <button class="primary" id="export">
+        ⬇ Export
+      </button>
 
-</div>
+    </div>
 
-</div>
+  </div>
 
-<div class="filearea">
 
-<div class="filelist" id="filelist"></div>
+  <div class="filearea">
 
-<div class="editor">
+    <div
+      class="filelist"
+      id="filelist"
+    ></div>
 
-<div>
 
-<b id="filename">Keine Datei</b>
+    <div class="editor">
 
-<button class="secondary" id="save">
-Speichern
-</button>
+      <div class="editorbar">
 
-</div>
+        <b id="filename">
+          Keine Datei
+        </b>
 
-<textarea
-id="code"
-spellcheck="false"
-></textarea>
+        <button
+          class="secondary"
+          id="save"
+        >
+          Speichern
+        </button>
 
-</div>
+      </div>
 
-</div>
+
+      <textarea
+        id="code"
+        spellcheck="false"
+      ></textarea>
+
+    </div>
+
+  </div>
 
 </section>
 
+
+<!-- CREATIVE -->
 <section class="view" id="creative">
 
-<div class="sectionhead">
+  <div class="sectionhead">
 
-<div>
+    <div>
 
-<small>CREATIVE LAB</small>
+      <small>CREATIVE LAB</small>
 
-<h2>Bilder & 3D</h2>
+      <h2>
+        Bilder & 3D
+      </h2>
 
-<p>
-Prompts erstellen und eine 3D-Szene testen.
-</p>
+      <p>
+        Bildideen erstellen und 3D-Szenen ausprobieren.
+      </p>
 
-</div>
+    </div>
 
-</div>
+  </div>
 
-<div class="twocol creative">
 
-<div class="card">
+  <div class="twocol creative">
 
-<h3>🖼️ Bild-Prompt</h3>
+    <div class="card">
 
-<input
-id="idea"
-placeholder="z. B. futuristische Stadt bei Nacht"
->
+      <h3>
+        🖼️ Bild-Prompt
+      </h3>
 
-<select id="style">
+      <input
+        id="idea"
+        placeholder="z. B. futuristische Stadt bei Nacht"
+      >
 
-<option>Cinematic</option>
-<option>3D Render</option>
-<option>Illustration</option>
-<option>Pixel Art</option>
-<option>Fantasy</option>
+      <select id="style">
 
-</select>
+        <option>Cinematic</option>
+        <option>3D Render</option>
+        <option>Illustration</option>
+        <option>Pixel Art</option>
+        <option>Fantasy</option>
+        <option>Realistisch</option>
 
-<button
-class="primary fullbtn"
-id="makePrompt"
->
-Prompt erstellen
-</button>
+      </select>
 
-<textarea
-id="imagePrompt"
-class="biginput"
-placeholder="Dein Prompt …"
-></textarea>
 
-</div>
+      <button
+        class="primary fullbtn"
+        id="makePrompt"
+      >
+        Prompt erstellen
+      </button>
 
-<div class="card three">
 
-<h3>🧊 3D Preview</h3>
+      <textarea
+        id="imagePrompt"
+        class="biginput"
+        placeholder="Dein Bild-Prompt …"
+      ></textarea>
 
-<div id="three"></div>
+    </div>
 
-<button class="secondary" id="rotate">
-Rotation an/aus
-</button>
 
-<button class="secondary" id="reset3d">
-Reset
-</button>
+    <div class="card three">
 
-</div>
+      <h3>
+        🧊 3D Preview
+      </h3>
 
-</div>
+      <div id="three"></div>
+
+      <button
+        class="secondary"
+        id="rotate"
+      >
+        Rotation an/aus
+      </button>
+
+      <button
+        class="secondary"
+        id="reset3d"
+      >
+        Reset
+      </button>
+
+    </div>
+
+  </div>
 
 </section>
 
+
+<!-- SETTINGS -->
 <section class="view" id="settings">
 
-<div class="sectionhead">
+  <div class="sectionhead">
 
-<div>
+    <div>
 
-<small>SETTINGS</small>
+      <small>SETTINGS</small>
 
-<h2>Einstellungen</h2>
+      <h2>
+        Einstellungen
+      </h2>
 
-<p>
-Konfiguriere deine KI-Umgebung.
-</p>
+      <p>
+        Konfiguriere dein KI-Backend.
+      </p>
 
-</div>
+    </div>
 
-</div>
+  </div>
 
-<div class="twocol">
 
-<div class="card">
+  <div class="twocol">
 
-<h3>🤖 Echte KI anbinden</h3>
+    <div class="card">
 
-<p class="muted">
-Hier kannst du später dein eigenes sicheres Backend eintragen.
-API-Schlüssel gehören niemals in GitHub-Pages-JavaScript.
-</p>
+      <h3>
+        🤖 Echte KI
+      </h3>
 
-<label>
-Backend-Endpunkt
-</label>
+      <p class="muted">
+        Verbinde hier später dein sicheres Backend.
+        API-Schlüssel niemals direkt in GitHub Pages speichern.
+      </p>
 
-<input
-id="endpoint"
-placeholder="https://dein-server.example/api/chat"
->
+      <label>
+        Backend-Endpunkt
+      </label>
 
-<button
-class="primary"
-id="saveEndpoint"
->
-Verbindung speichern
-</button>
+      <input
+        id="endpoint"
+        placeholder="https://dein-server.example/api/chat"
+      >
 
-<div class="notice" id="endpointState">
-Kein Backend – Demo-Modus.
-</div>
+      <button
+        class="primary"
+        id="saveEndpoint"
+      >
+        Verbindung speichern
+      </button>
 
-</div>
+      <div
+        class="notice"
+        id="endpointState"
+      >
+        Kein Backend – Demo-Modus.
+      </div>
 
-<div class="card">
+    </div>
 
-<h3>🧠 Verhalten</h3>
 
-<label>
-Antwortstil
-</label>
+    <div class="card">
 
-<select id="responseStyle">
+      <h3>
+        🧠 Verhalten
+      </h3>
 
-<option>
-Hilfreich & ausführlich
-</option>
+      <label>
+        Antwortstil
+      </label>
 
-<option>
-Kurz & direkt
-</option>
+      <select id="responseStyle">
 
-<option>
-Technisch
-</option>
+        <option>
+          Hilfreich & ausführlich
+        </option>
 
-<option>
-Einfach erklärt
-</option>
+        <option>
+          Kurz & direkt
+        </option>
 
-</select>
+        <option>
+          Technisch
+        </option>
 
-<label>
-Automatische Planung
-</label>
+        <option>
+          Einfach erklärt
+        </option>
 
-<select id="autoPlan">
+      </select>
 
-<option>Aktiv</option>
-<option>Deaktiviert</option>
+      <label>
+        Automatische Planung
+      </label>
 
-</select>
+      <select id="autoPlan">
 
-</div>
+        <option>Aktiv</option>
+        <option>Deaktiviert</option>
 
-<div class="card full">
+      </select>
 
-<h3>🧹 Daten</h3>
+    </div>
 
-<p class="muted">
-Löscht lokale AI-Builder-Daten dieses Browsers.
-</p>
 
-<button class="danger" id="reset">
-Alles zurücksetzen
-</button>
+    <div class="card full">
 
-</div>
+      <h3>
+        🧹 Daten
+      </h3>
 
-</div>
+      <p class="muted">
+        Löscht alle lokalen AI-Builder-Daten.
+      </p>
+
+      <button
+        class="danger"
+        id="reset"
+      >
+        Alles zurücksetzen
+      </button>
+
+    </div>
+
+  </div>
 
 </section>
 
 </main>
 
 </div>
+
 
 <script type="module" src="app.js"></script>
 
